@@ -1,4 +1,4 @@
-package com.example.apartment_predictor;
+package com.example.apartment_predictor.model;
 
 import java.time.LocalDate;
 

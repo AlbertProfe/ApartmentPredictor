@@ -1,9 +1,9 @@
 package com.example.apartment_predictor;
 
+import com.example.apartment_predictor.model.Apartment;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.stereotype.Component;
 
 @SpringBootApplication
 public class ApartmentPredictorApplication implements CommandLineRunner {

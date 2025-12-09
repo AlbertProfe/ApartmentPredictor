@@ -1,7 +1,12 @@
-package com.example.apartment_predictor;
+package com.example.apartment_predictor.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
+@Entity
 public class Apartment {
 
+    @Id
     private String id;
     private Long price;
     private Integer area;
