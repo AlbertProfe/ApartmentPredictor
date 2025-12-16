@@ -1,7 +1,6 @@
 package com.example.apartment_predictor;
 
-import com.example.apartment_predictor.model.Apartment;
-import com.example.apartment_predictor.model.Review;
+import com.example.apartment_predictor.model.*;
 import com.example.apartment_predictor.repository.ApartmentRepository;
 import com.example.apartment_predictor.repository.ReviewRepository;
 import com.example.apartment_predictor.utils.PrintingUtils;
@@ -10,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -29,7 +29,7 @@ class ApartmentPredictorApplicationTests {
 
         Apartment apartment1 = new Apartment();
         apartment1.setArea(5);
-        apartment1.setAirconditioning("yes");
+        //apartment1.setAirconditioning("yes");
         // ....
         apartmentRepository.save(apartment1);
         System.out.println("Apartment saved: " + apartment1);
@@ -69,7 +69,7 @@ class ApartmentPredictorApplicationTests {
 
         reviewRepository.save(review1);
 
-        apartment1.getReviews().add(review1);
+        //apartment1.getReviews().add(review1);
 
         apartmentRepository.save(apartment1);
 
@@ -113,6 +113,25 @@ class ApartmentPredictorApplicationTests {
         }
 
 
+    }
+
+    @Test
+    void testHOAcalculation() {
+        ArrayList<ResidentialProperty> properties = new ArrayList<>();
+
+        properties.add(new Apartment(40, "hola", 3, 2, 2, true, true, 7));
+        properties.add(new House(30, "hola", 2, 2, 2, true, 20, true, true, true, true, 20, true, 30));
+        properties.add(new Duplex(70, "hola", 2, 9, 2, true, 20, true, true, false, false, 20, true));
+        properties.add(new Townhouse(70, "hola", 2, 9, 2, true, 20, true, true, false, false, 20, true));
+
+        for (ResidentialProperty property : properties) {
+            if (property.requiresHomeownersAssociation()) {
+                System.out.println(property + " requiere una asociación de propietarios");
+            }
+            else {
+                System.out.println(property + " no requiere una asociación de propietarios");
+            }
+        }
     }
 
 }

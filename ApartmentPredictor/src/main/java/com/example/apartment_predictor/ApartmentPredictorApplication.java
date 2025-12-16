@@ -34,7 +34,7 @@ public class ApartmentPredictorApplication implements CommandLineRunner {
     public void testApartmentsInsert() {
         System.out.println("Creating apartment objects and saving to db...");
         // Create apartment objects based on your sample data
-        Apartment apartment1 = new Apartment(
+        /*Apartment apartment1 = new Apartment(
                 13300000L,    // price
                 7420,         // area
                 4,            // bedrooms
@@ -48,10 +48,10 @@ public class ApartmentPredictorApplication implements CommandLineRunner {
                 2,            // parking
                 "yes",        // prefarea
                 "furnished"   // furnishingstatus
-        );
+        );*/
 
         // Create additional sample apartments
-        Apartment apartment2 = new Apartment(
+        /*Apartment apartment2 = new Apartment(
                 8500000L,     // price
                 5200,         // area
                 3,            // bedrooms
@@ -106,7 +106,7 @@ public class ApartmentPredictorApplication implements CommandLineRunner {
             System.out.println(apartment);
         }
 
-        //apartmentRepository.findAll().forEach(System.out::println);
+        //apartmentRepository.findAll().forEach(System.out::println);*/
     }
 
     public void testReviewsInsert() {
