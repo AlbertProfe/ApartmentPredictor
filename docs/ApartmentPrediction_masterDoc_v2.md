@@ -18,9 +18,17 @@ Historical notes:
 
 #### Api Rest references
 
-- [Network: API Rest – albertprofe wiki](https://albertprofe.dev/devops/devops-network-rest.html)
+- What is api rest:
+  
+  - [Network: API Rest – albertprofe wiki](https://albertprofe.dev/devops/devops-network-rest.html)
+  
+  - [What is a REST API?](https://www.redhat.com/en/topics/api/what-is-a-rest-api) /  [What is a REST Api, GoogleCloud](https://cloud.google.com/discover/what-is-rest-api)
 
-- https://www.postman.com/
+- API REST test tools:
+  
+  - https://www.postman.com/ / https://learning.postman.com/docs/sending-requests/requests/
+  
+  - https://swagger.io/ / https://springdoc.org/
 
 - [restaurantManager controller](https://github.com/AlbertProfe/restaurantManager/blob/master/src/main/java/dev/example/restaurantManager/controller/BookingController.java)
 
@@ -38,7 +46,7 @@ From source:
 
 ### Version goal
 
-> We are defining a CRUD service in Spring Boot for Apartment, Owners, Reviewers and Post entities, then test them to list, create, edit, delete, and assign posts to apartments with <mark>JUnit</mark>.
+> We are defining a Rest Controller in Spring Boot for Apartment and Review entities, then test them to list, create, edit, delete, and assign reviews to apartments with <mark>Postman</mark> test tool.
 
 ## Project commits
 
@@ -169,7 +177,11 @@ public class Review {
 > 
 > **It is MC (Model-Controller) layered**, with Test invoking Service (buisness logic) → Repository (data access) → DB, enforcing s<mark>eparation of concerns. </mark>
 > 
-> The goal is to validate application logic and data access without external infrastructure, enabling fast, isolated tests.
+> The goal is to:
+> 
+> - validate application logic and data access without external infrastructure, enabling fast, isolated tests.
+> 
+> - validate **Rest Controle**r layer and <mark>data publising with Postman tool.</mark>
 
 ![](https://raw.githubusercontent.com/AlbertProfe/ApartmentPredictor/refs/heads/master/docs/diagrams/mc_uml-junittest_v1.png)
 
@@ -189,6 +201,10 @@ This provides basic `CRUD` (Create, Read, Update, Delete) operations for the `Ap
 
 ### Rest Controller
 
+![](https://www.gstatic.com/bricks/image/321862a0-3a14-4abb-a148-36bb8781c0f7.png)
+
+A REST API is an [application programming interface (API)](https://www.redhat.com/en/topics/api/what-are-application-programming-interfaces) that follows the design principles of the REST architectural style. REST is short for **representational state transfer**, and is a set of rules and guidelines about how you should build a web API.
+
 #### What is a REST controller?
 
 In **Spring Boot**, a **REST controller** is a Java class that:
@@ -196,6 +212,8 @@ In **Spring Boot**, a **REST controller** is a Java class that:
 - **Receives HTTP requests** from clients (browser, Postman, frontend app)
 - **Runs your backend logic** (usually by calling a `Service`)
 - **Returns data** (usually JSON) as the HTTP response
+- Methods annotated with **request mappings**:
+  - (e.g., `@GetMapping`, `@PostMapping`) handle web requests, HTTP.
 
 In code, it’s typically a class annotated with:
 
@@ -242,9 +260,9 @@ public class ApartmentRestController {
 }
 ```
 
-
-
 #### PathVariable vs RequestParam
+
+![](https://raw.githubusercontent.com/AlbertProfe/ApartmentPredictor/refs/heads/master/docs/screenshots/postman-getById-1.png)
 
 Using `@PathVariable`
 
@@ -268,6 +286,8 @@ GET http://localhost:8080/api/apartment/getById/19a1b4c3-cfc8-4db2-885c-546db051
 - The `id` is part of the URL path.
 - Best fit for “resource by id” in REST style (`/apartments/{id}` pattern).
 
+![](https://raw.githubusercontent.com/AlbertProfe/ApartmentPredictor/refs/heads/master/docs/screenshots/postman-getById-2.png)
+
 Using `@RequestParam` (query parameter style)
 
 **Controller mapping**
@@ -289,8 +309,6 @@ GET http://localhost:8080/api/apartment/getById?id=19a1b4c3-cfc8-4db2-885c-546db
 
 - The `id` is passed as a query string parameter (`?id=...`).
 - Often used for filtering/search endpoints, but can also be used for “by id” if you prefer.
-
-
 
 #### Optional: support *both* styles at once
 
