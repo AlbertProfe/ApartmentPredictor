@@ -374,7 +374,7 @@ Link:
 
 - [Request/response Cycle](https://github.com/alexpjava/ApartmentPredictorAlpy/blob/main/docs/flow_request_response_cycle_en.md) by Alex P.
 
-![](https://raw.githubusercontent.com/AlbertProfe/ApartmentPredictor/refs/heads/master/docs/diagram/UML-reqres-RESTController.png)
+![](https://raw.githubusercontent.com/AlbertProfe/ApartmentPredictor/refs/heads/master/docs/diagrams/UML-reqres-RESTController.png)
 
 #### Postman documentation API REST
 
