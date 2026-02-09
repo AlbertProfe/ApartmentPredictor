@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+@CrossOrigin
 @RestController
 @RequestMapping("aptPredictor/v1/apartments")
 public class ApartmentRestController {

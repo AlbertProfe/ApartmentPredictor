@@ -38,7 +38,6 @@ public class ApartmentService {
 
         Apartment existing = existingOpt.get();
 
-        if (apartment.getPrice() != null) existing.setPrice(apartment.getPrice());
         if (apartment.getArea() != null) existing.setArea(apartment.getArea());
         if (apartment.getBedrooms() != null) existing.setBedrooms(apartment.getBedrooms());
         if (apartment.getBathrooms() != null) existing.setBathrooms(apartment.getBathrooms());

@@ -20,12 +20,13 @@ public class Duplex extends Apartment {
     }
 
     @Override
-    public double calculatePrice() {
+    public Long calculatePrice() {
         double basePrice = area * 120 + (bedrooms * 8000);
         if (elevator) {
             basePrice *= 1.15;
         }
-        return basePrice * (1 + (area * 0.04));
+        //return basePrice * (1 + (area * 0.04));
+        return 0L;
     }
 
 

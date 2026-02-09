@@ -3,13 +3,14 @@ package com.example.apartment_predictor.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.time.Instant;
+
 @Entity
 public class Apartment {
 
     @Id
     protected String id;
     private String name;
-    private Long price;
     protected Integer area;
     protected Integer bedrooms;
     private Integer bathrooms;
@@ -21,10 +22,9 @@ public class Apartment {
     private boolean parking;
     private FurnishingStatus furnishingstatus;
 
-    public Apartment(String id, String name, Long price, Integer area, Integer bedrooms, Integer bathrooms, Integer stories, boolean guestroom, boolean basement, boolean hotwaterheating, boolean airconditioning, boolean parking, FurnishingStatus furnishingstatus) {
+    public Apartment(String id, String name, Integer area, Integer bedrooms, Integer bathrooms, Integer stories, boolean guestroom, boolean basement, boolean hotwaterheating, boolean airconditioning, boolean parking, FurnishingStatus furnishingstatus) {
         this.id = id;
         this.name = name;
-        this.price = price;
         this.area = area;
         this.bedrooms = bedrooms;
         this.bathrooms = bathrooms;
@@ -57,11 +57,7 @@ public class Apartment {
     }
 
     public Long getPrice() {
-        return price;
-    }
-
-    public void setPrice(Long price) {
-        this.price = price;
+        return calculatePrice();
     }
 
     public Integer getArea() {
@@ -150,5 +146,35 @@ public class Apartment {
     }
 
     // Funciones adicionales
-    public double calculatePrice() {return 0;}
+    public Long calculatePrice() {
+
+        Long price = 0L;
+
+        price += area * 1500;
+        price = Math.round(price * (1 + (stories - 1) * 0.15)); // For each additional story, the price of each m2 gets multiplied.
+        price += bedrooms * 7500;
+        price += bathrooms * 5500;
+        price += guestroom ? 10000 : 0;
+        price += hotwaterheating ? 15000 : 0;
+        price += airconditioning ? 20000 : 0;
+        price += parking ? 30000 : 0;
+        price += basement ? 45000 : 0;
+
+        switch (furnishingstatus) {
+            case PARTIALLY_FURNISHED ->  price += 3000;
+            case FULLY_FURNISHED -> price += 8500;
+            default -> price += 0;
+        }
+
+        // Simplified inflation simulation.
+        // Applies a multiplier based on the amount of days that passed since 1970
+        double multiplier;
+        int daysPassed;
+        Instant currentTime = Instant.now();
+
+        daysPassed = (int) Math.floor((double) currentTime.getEpochSecond() / 86400);
+        multiplier = 1 + daysPassed * 0.000075;
+
+        return Math.round(price * multiplier);
+    }
 }
