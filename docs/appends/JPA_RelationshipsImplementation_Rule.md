@@ -41,6 +41,8 @@ public class Review {
 }
 ```
 
+![](https://raw.githubusercontent.com/AlbertProfe/ApartmentPredictor/refs/heads/master/docs/diagrams/CACAJEC.png)
+
 ## **0. Cardinality Between Entities**
 
 - Analyze the business relationship (One apartment → Many reviews)
