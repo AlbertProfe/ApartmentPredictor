@@ -23,21 +23,31 @@ public class PopulateDB {
     //todo: define our pattern, orchestrator
     //todo: define steps for our orchestrator > populateAll()
 
-    // orchestrator
+    // --------- ORCHESTRATOR ------------------------------------------------
     public int populateAll(int qty) {
 
         // 1 populate Apartments > List
-        List<Apartment> apartments = populatePlainApartments(qty);
+        List<Apartment> plainApartments = populatePlainApartments(qty);
         // 2 populate Schools > List
         List<School> schools = populateSchools(qty);
         // 3 assignSchoolsToApartments
-        boolean status = assignSchoolsToApartments(apartments, schools);
+        boolean status = assignSchoolsToApartments(plainApartments, schools);
+
+
         // 4 populate Reviewers > List
-        // 5 populate Reviews (very general description, valid for all apartments) and assign Reviewers
-        // 6 assign Reviews to Apartments
-        // 7 populate Owners
-        // 8 populate PropertyContracts assign Owners and Apartments
-        // 9 check and return qty of created objects
+        List<Reviewer> reviewers = populateReviewers(qty);
+        // 5 create Reviews (very general description, valid for all apartments) and assign Reviewers
+        // DO NOT SAVE to db!
+        List<Review> plainReviews = populatePlainReviews(qty);
+        // 6 assign Reviewers to Reviews
+        List<Review> reviews = assignReviewersToReviews(reviewers, plainReviews);
+        // 7 assign Reviews to Apartments
+        List<Apartment> apartments = assignReviewsToApartments(reviews, plainApartments);
+
+
+        // 8 populate Owners
+        // 9 populate PropertyContracts assign Owners and Apartments
+        // 10 check and return qty of created objects
 
 
         return 0;
@@ -177,24 +187,28 @@ public class PopulateDB {
 
     // ---------- POPULATE reviews, reviewers ------------------------------
 
-    public List<Person> populatePersons(int qty){
-        return null;
-    }
+    /*public List<Person> populatePeople(int qty){return null;}*/
 
     public List<Reviewer> populateReviewers(int qty) {
+
+
         return null;
     }
 
-    public List<Review> populateReviews(int qty) {
+    public List<Review> populatePlainReviews(int qty) {
         return null;
     }
 
-    public boolean assignReviewersToReviews(){
-        return true;
+    public List<Review> assignReviewersToReviews(List<Reviewer> reviewers, List<Review> reviews){
+
+        // 1 get all reviewers
+
+
+        return null;
     }
 
-    public boolean assignReviewsToApartments(){
-        return true;
+    public List<Apartment> assignReviewsToApartments(List<Review> reviews, List<Apartment> apartments){
+        return null;
     }
 
     // ---------- POPULATE owners, property contracts ------------------------------

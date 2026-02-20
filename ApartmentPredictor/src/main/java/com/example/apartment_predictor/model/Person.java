@@ -2,11 +2,14 @@ package com.example.apartment_predictor.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public  class Person {
 
     @Id
@@ -22,6 +25,12 @@ public  class Person {
     }
 
     public Person(String fullName, String email, String password, LocalDate birthDate, boolean isActive) {
+        this.id = UUID.randomUUID().toString();
+        this.fullName = fullName;
+        this.email = email;
+        this.password = password;
+        this.birthDate = birthDate;
+        this.isActive = isActive;
     }
 
     public String getId() {

@@ -21,6 +21,11 @@ public class Review {
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Apartment apartment;
 
+    @JsonIgnore
+    @JoinColumn(name = "reviewer_fk")
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Reviewer reviewer;
+
 
     public Review() {
         this.id = UUID.randomUUID().toString();

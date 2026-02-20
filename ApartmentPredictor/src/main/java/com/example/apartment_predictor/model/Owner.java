@@ -1,7 +1,6 @@
 package com.example.apartment_predictor.model;
 
 import jakarta.persistence.Entity;
-
 import java.time.LocalDate;
 
 @Entity

@@ -14,9 +14,7 @@ public class Reviewer extends Person {
 
 
     // Default constructor
-    public Reviewer() {
-        super();
-    }
+    public Reviewer() {}
 
     // Constructor delegating to Person
     public Reviewer(String fullName, String email, String password, LocalDate birthDate, boolean isActive,
