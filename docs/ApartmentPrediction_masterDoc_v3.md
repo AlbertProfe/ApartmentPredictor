@@ -207,7 +207,84 @@ todo
 
 ## Inherence
 
-todo
+> The project uses a clean **single-table-per-class** inheritance strategy in JPA to model different types of people involved in the apartment review/ownership system.
+
+Core Structure
+
+```text
+               Person
+                 ↑
+      ┌──────────┴──────────┐
+      │                     │
+   Reviewer              Owner
+```
+
+- **Person** is the **abstract base entity** (even though not marked abstract — it can still be used as base)
+- **Owner** and **Reviewer** are concrete subclasses that extend **Person**
+
+### JPA Configuration
+
+```java
+@Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public class Person { ... }
+```
+
+```java
+@Entity
+public class Owner extends Person { ... }
+
+@Entity
+public class Reviewer extends Person { ... }
+```
+
+### Key Characteristics of `TABLE_PER_CLASS`
+
+| Aspect               | Behavior in this setup                                  | Pros                                           | Cons (important to know)                                 |
+| -------------------- | ------------------------------------------------------- | ---------------------------------------------- | -------------------------------------------------------- |
+| Tables created       | Separate table for **Person**, **Owner**, **Reviewer**  | Clear separation, easy to query specific types | Duplicate columns (fullName, email, etc.) in every table |
+| Columns              | All Person fields duplicated in Owner & Reviewer tables | No join needed to read a concrete type         | Wasted space if many common fields                       |
+| Queries              | `SELECT * FROM Owner` → directly readable               | Simple for concrete-class queries              | Polymorphic queries (`Person p`) require UNION           |
+| ID generation        | Each table has its own `id` column (UUID)               | No shared sequence issues                      | Cannot easily do `SELECT * FROM Person`                  |
+| Polymorphism support | Limited — works, but slow (UNION under the hood)        | —                                              | Performance hit on polymorphic queries                   |
+
+**Shared Fields (from Person)**
+
+Every `Owner` and `Reviewer` row contains:
+
+- `id` (UUID)
+- `fullName`
+- `email`
+- `password` (⚠️ plain text — security concern in real app!)
+- `birthDate`
+- `isActive`
+
+**Specific Fields**
+
+| Entity   | Extra fields                                               | Business meaning                                                                    |
+| -------- | ---------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Owner    | isBusiness, idLegalOwner, registrationDate, qtyDaysAsOwner | Company vs individual, legal ID, tenure tracking                                    |
+| Reviewer | isBusiness, xAccount, webURL, qtyReviews                   | Professional reviewer? Just ocasional one?, Twitter/X handle, website, review count |
+
+### Quick Summary
+
+The model uses **InheritanceType.TABLE_PER_CLASS** to give **Owner** and **Reviewer** their own independent tables while inheriting common person attributes (`fullName`, `email`, `password`, `birthDate`, `isActive`) from the **Person** base class.
+
+This is a good choice when:
+
+- We rarely query across all persons polymorphically
+- We want clean separation between owner and reviewer records
+- We don't mind some column duplication
+
+### Most common production alternatives
+
+| Strategy            | When to prefer over TABLE_PER_CLASS                                               |
+| ------------------- | --------------------------------------------------------------------------------- |
+| **SINGLE_TABLE**    | High polymorphism, many shared queries, want best performance                     |
+| **JOINED**          | Cleanest design, good normalization, still supports polymorphism                  |
+| **TABLE_PER_CLASS** | You mostly work with concrete types, want simple table structure (current choice) |
+
+> If this application grows (e.g. adding Admin, Tenant, Agent roles), **JOINED** or **SINGLE_TABLE** usually becomes more maintainable.
 
 ## JPA
 
@@ -387,7 +464,9 @@ This is a classic **many-to-one / one-to-many bidirectional** pattern from the *
 1. **Bidirectional Apartment ↔ Review**  
    
    - Apartment owns the relationship (`@OneToMany(mappedBy = "apartment")`)
+   
    - Review has the foreign key (`@ManyToOne` + `@JoinColumn`)
+   
    - We have helper methods in Apartment:
      
      ```java
@@ -400,7 +479,9 @@ This is a classic **many-to-one / one-to-many bidirectional** pattern from the *
 2. **Unidirectional Reviewer → Review**  
    
    - Reviewer **does not** have a `List<Review> reviews` collection  
+   
    - Therefore the relationship is **unidirectional** from Review → Reviewer  
+   
    - We **can** still query all reviews of a reviewer via JPQL / Spring Data:
      
      ```java
@@ -583,10 +664,9 @@ Orchestrator skeleton:
         List<PropertyContract> propertyContracts = populatePropertyContracts(qty);
         // 10 check and return qty of created objects
         // todo
- 
+
         return 0;
     }
-
 ```
 
 This creates a very readable, maintainable "story" of how the test database is built — exactly the purpose of a good orchestrator / seeder class.
