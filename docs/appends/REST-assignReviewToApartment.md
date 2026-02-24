@@ -114,10 +114,20 @@ For Postman testing:
 
 ## Screeshoots
 
+Postman request:
+
+- `http://localhost:8080/api/v1/assign/apartment/reviews?apartmentId=926a8571-0972-4c06-a851-4778c1a01058&reviewerId=32fefe45-d164-4104-acd4-d3e73595da56`
+
 ![](https://raw.githubusercontent.com/AlbertProfe/ApartmentPredictor/refs/heads/master/docs/diagrams/assignReviewToApartment-flow/postaman-assignReviewToApartment-1.png)
+
+Response:
 
 ![](https://raw.githubusercontent.com/AlbertProfe/ApartmentPredictor/refs/heads/master/docs/diagrams/assignReviewToApartment-flow/postaman-assignReviewToApartment-2.png)
 
+Remember to remove `@JsonIgnore` we coded to prevent cicular reference:
+
 ![](https://raw.githubusercontent.com/AlbertProfe/ApartmentPredictor/refs/heads/master/docs/diagrams/assignReviewToApartment-flow/postaman-assignReviewToApartment-3.png)
+
+Response witout `@JsonIgnore`, `Apartment` > `Review` > `Reviewer`
 
 ![](https://raw.githubusercontent.com/AlbertProfe/ApartmentPredictor/refs/heads/master/docs/diagrams/assignReviewToApartment-flow/postaman-assignReviewToApartment-4.png)
