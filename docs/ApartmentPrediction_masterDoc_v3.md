@@ -124,6 +124,8 @@ public class Apartment {
     private List reviews;
     //@ManyToMany
     private List schools;
+    //ManyToOne
+    private List contracts
 }
 
 public class School {
@@ -136,23 +138,33 @@ public class School {
     private boolean isPublic;
 }
 
-public class PropiertyContract {
-     private String id;
-     private String date;
-     private String registerNumberPropiertyContract;
-     private long valueRealState;  
-
-}
+private String id;
+    private String propertyContractCode;
+    private String urlContractPropertyDocument;
+    private LocalDate contractDate;
+    private long valuePropertyContract;
+    private String typeProperty;
+    private String address;
+    private boolean isActive;
+    //ManyToOne
+    private Owner owner;
+    //ManyToOne
+    private Apartment apartment;
 ```
 
 ```java
+public class Person {
+
+    private String id;
+    private String fullName;
+    private LocalDate birthDate;
+    private String email;
+    private String password;
+    private boolean isActive;
+}
+
 public class Owner {
 
-    private  String id;
-    private String name;
-    private String email;
-    private int age;
-    private boolean isActive;
     private boolean isBusiness;
     private String idLegalOwner;
     private LocalDate registrationDate;
@@ -173,10 +185,10 @@ public class Review {
 }
 
 public class Reviewer {
-    private  String id;
-    private String name;
-    private String email;
-    private int age;
+    private boolean isBusiness;
+    private String xAccount;
+    private String webURL;
+    private int qtyReviews;
 
 }
 ```
@@ -555,14 +567,15 @@ The current implementation structures data population in a clear, <mark>sequenti
 Orchestrator skeleton:
 
 ```java
- public int populateAll(int qty) {
+public int populateAll(int qty) {
 
         // 1 populate Apartments > List
         List<Apartment> plainApartments = populatePlainApartments(qty);
         // 2 populate Schools > List
         List<School> schools = populateSchools(qty);
         // 3 assignSchoolsToApartments
-        List<Apartment> plainApartmentsWithSchools = assignSchoolsToApartments(plainApartments, schools);
+        List<Apartment> plainApartmentsWithSchools =
+                assignSchoolsToApartments(plainApartments, schools);
 
         // 4 populate Reviewers > List
         List<Reviewer> reviewers = populateReviewers(qty);
@@ -572,20 +585,18 @@ Orchestrator skeleton:
         // 6 assign Reviewers to Reviews
         List<Review> reviews = assignReviewersToReviews(reviewers, plainReviews);
         // 7 assign Reviews to Apartments
-        List<Apartment> plainApartmentsWithSchoolsAndReviews = assignReviewsToApartments(reviews, plainApartmentsWithSchools);
+        List<Apartment> plainApartmentsWithSchoolsAndReviews =
+                assignReviewsToApartments(reviews, plainApartmentsWithSchools);
 
         // 8 populate Owners
         List<Owner> owners = populateOwners(qty);
-        // 9 populate PlainPropertyContracts
-        List<PropertyContract> plainPropertyContracts = populatePlainPropertyContracts(qty);
-        // 10 populate PropertyContracts assign Owners and Apartments
+        // 9 populate PropertyContracts assign Owners and Apartments
         List<PropertyContract> plainPropertyContractsAssigned =
-                assignPropertyContracts(qty, plainPropertyContracts, owners);
-        // 11 check and return qty of created objects
+                createAndAssignPropertyContracts(qty, owners, plainApartmentsWithSchoolsAndReviews);
+        // 10 check and return qty of created objects
         // todo
 
-        return 0;
-    }
+}
 ```
 
 This creates a very readable, maintainable "story" of how the test database is built — exactly the purpose of a good orchestrator / seeder class.
