@@ -66,9 +66,14 @@ public class PopulateDB {
         List<PropertyContract> plainPropertyContractsAssigned =
                 createAndAssignPropertyContracts(qty, owners, plainApartmentsWithSchoolsAndReviews);
         // 10 check and return qty of created objects
-
-
-        return 0;
+        int totalQty = plainApartments.size() +
+                schools.size() +
+                reviewers.size() +
+                plainReviews.size() +
+                owners.size() +
+                plainPropertyContractsAssigned.size();
+        System.out.println("\nPopulated db: " + totalQty + " entities.");
+        return totalQty;
     }
 
     // --------- POPULATE apartments and schools ------------------------------

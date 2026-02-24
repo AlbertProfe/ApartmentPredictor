@@ -18,11 +18,11 @@ public class PopulateDBController {
     @Autowired
     PopulateDB populateDB;
 
-    @GetMapping("/populateDB/{qty}")
+    @GetMapping("/populateDB")
     public ResponseEntity<String> populateAll(@RequestParam int qty) {
         int createdQty = populateDB.populateAll(qty);
-        if (createdQty == qty)
-            return ResponseEntity.ok("Populated db: " + createdQty);
+        if (createdQty >= (qty * 6))
+            return ResponseEntity.ok("\nPopulated db: " + createdQty + " entities.");
         else
             return ResponseEntity.badRequest().body("Failed to populate db");
     }
