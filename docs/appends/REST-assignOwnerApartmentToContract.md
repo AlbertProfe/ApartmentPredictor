@@ -50,7 +50,7 @@ Code skeleton:
         // Defensive programming: validate apartmentId exists
         // Defensive programming: validate ownerId exists
         // Defensive programming: validate propertyContractData is not null
-      
+
         // Create a new PropertyContract with UUID id and data from propertyContractData
         PropertyContract newPropertyContract = new PropertyContract();
         // set all data for newPropertyContract with propertyContractData
@@ -69,8 +69,6 @@ Code skeleton:
         return ResponseEntity.ok().headers(headers).body(apartment);
     }
 ```
-
-
 
 Code:
 
@@ -397,3 +395,7 @@ Apartment Details:
 - Two different owners share the same apartment
 - Both contracts are currently inactive
 - The apartment has no assigned schools but has one positive review
+
+## Screenshots
+
+* [assignOwnerApartmentToContract-flow](https://github.com/AlbertProfe/ApartmentPredictor/tree/master/docs/diagrams/assignOwnerApartmentToContract-flow)
