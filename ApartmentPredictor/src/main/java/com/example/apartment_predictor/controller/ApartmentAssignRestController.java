@@ -1,9 +1,6 @@
 package com.example.apartment_predictor.controller;
 
-import com.example.apartment_predictor.model.Apartment;
-import com.example.apartment_predictor.model.Review;
-import com.example.apartment_predictor.model.Reviewer;
-import com.example.apartment_predictor.model.School;
+import com.example.apartment_predictor.model.*;
 import com.example.apartment_predictor.repository.ReviewRepository;
 import com.example.apartment_predictor.repository.ReviewerRepository;
 import com.example.apartment_predictor.repository.SchoolRepository;
@@ -139,11 +136,30 @@ public class ApartmentAssignRestController {
         return ResponseEntity.ok().headers(headers).body(apartmentSaved);
     }
 
-    @PutMapping("/owners")
-    public ResponseEntity<Apartment> assignOwnerToApartment(){
+    @PutMapping("/contractOwner")
+    public ResponseEntity<Apartment> assignOwnerAndApartmentToContract(
+            @RequestParam String apartmentId,
+            @RequestParam String ownerId,
+            @RequestBody PropertyContract propertyContractData
+    ){
+        // defensive programming: apartmentId, ownerId exists
+
+        // create a new PropertyContract with id UUID with data from propertyContractData
+
+        // get apartment by id, get owner by id
+
+        // newPropertyContract.setOwner(owner);
+        // newPropertyContract.setApartment(apartment);
+
+        // save newPropertyContract
+
+        // return apartment
+
+
+
+
         return null;
     }
-
 
 
 }
