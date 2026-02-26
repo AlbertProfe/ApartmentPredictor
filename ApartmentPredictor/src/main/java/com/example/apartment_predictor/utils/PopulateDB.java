@@ -36,9 +36,33 @@ public class PopulateDB {
     //todo: define our pattern, orchestrator
     //todo: define steps for our orchestrator > populateAll()
 
+    public int calculateQty(List<Apartment> plainApartments,
+                            List<School> schools, List<Reviewer> reviewers,
+                            List<Review> plainReviews, List<Owner> owners,
+                            List<PropertyContract> plainPropertyContractsAssigned) {
+        int totalQty = plainApartments.size() +
+                schools.size() +
+                reviewers.size() +
+                plainReviews.size() +
+                owners.size() +
+                plainPropertyContractsAssigned.size();
+        System.out.println("\n" +
+                "\nPopulateDB: " +
+                "\n---------------------------------------------" +
+                 "\nPopulated db: " + totalQty + " entities." +
+                "\nApartments: " + plainApartments.size() + " entities." +
+                "\nSchools: " + schools.size() + " entities." +
+                "\nReviewers: " + reviewers.size() + " entities." +
+                "\nReviews: " + plainReviews.size() + " entities." +
+                "\nOwners: " + owners.size() + " entities." +
+                "\nPropertyContracts: " + plainPropertyContractsAssigned.size() + " entities." +
+                "\n---------------------------------------------");
+        return totalQty;
+    }
+
     // --------- ORCHESTRATOR ------------------------------------------------
     public int populateAll(int qty) {
-
+        int totalQty = 0;
         // 1 populate Apartments > List
         List<Apartment> plainApartments = populatePlainApartments(qty);
         // 2 populate Schools > List
@@ -66,13 +90,8 @@ public class PopulateDB {
         List<PropertyContract> plainPropertyContractsAssigned =
                 createAndAssignPropertyContracts(qty, owners, plainApartmentsWithSchoolsAndReviews);
         // 10 check and return qty of created objects
-        int totalQty = plainApartments.size() +
-                schools.size() +
-                reviewers.size() +
-                plainReviews.size() +
-                owners.size() +
-                plainPropertyContractsAssigned.size();
-        System.out.println("\nPopulated db: " + totalQty + " entities.");
+        totalQty = calculateQty(plainApartments, schools, reviewers, plainReviews, owners, plainPropertyContractsAssigned);
+
         return totalQty;
     }
 
