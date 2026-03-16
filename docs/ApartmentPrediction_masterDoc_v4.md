@@ -220,6 +220,8 @@ public class Reviewer {
 
 ## Postman documentation API REST
 
+![](https://raw.githubusercontent.com/AlbertProfe/ApartmentPredictor/refs/heads/master/docs/screenshots/postman-getPaginated.png)
+
 - [apartmentPredictorCRUD](https://documenter.getpostman.com/view/7473960/2sBXVeFs8L)
 
 ## JPA
