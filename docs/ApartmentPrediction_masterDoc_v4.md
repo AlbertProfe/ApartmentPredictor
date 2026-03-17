@@ -238,6 +238,10 @@ Spring Data’s mission is to provide a familiar and consistent, **Spring-based
 
 This is an **umbrella project which contains many subprojects** that are specific to a given database. The projects are developed by working together with many of the companies and developers that are behind these exciting technologies.
 
+### Lazy and Eager
+
+- https://github.com/AlbertProfe/userBorrowBookFilter/blob/master/docs/userBorrowBook-filter-lazy-eager.md
+
 ### Cascade Delete
 
 > Gaol to refactor: when an Apartment is deleted:
