@@ -37,7 +37,9 @@ Historical notes:
 
 #### Specification
 
-- [JPA-specification-1.md](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/JPA-specification-1.md) / [JPA-specification-2.md](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/JPA-specification-2.md)
+- [JPA-specification-1](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/JPA-specification-1.md) / [JPA-specification-2](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/JPA-specification-2.md) / [JPA-specification-Apartment](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/JPA-specification-Apartment.md))
+
+- [JPA-2026_QueryReport](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/JPA-2026_QueryReport.md)
 
 - [Specifications :: Spring Data JPA](https://docs.spring.io/spring-data/jpa/reference/jpa/specifications.html)
 
