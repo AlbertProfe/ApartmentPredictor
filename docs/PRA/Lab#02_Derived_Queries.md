@@ -21,7 +21,8 @@ Write a derived query method that finds the **top 10 apartments** ordered by **a
 Use `OrderByAverageRatingDesc` + `Top10` + conditions.  
 Display them in the UI as "Highly rated apartments with balcony (sorted best first)".
 
-**Exercise 4 – Combined Count + Ordered Results  
+## Exercise 4 – Combined Count + Ordered Results
+
 Implement two methods:  
 a) `long countByBedroomsGreaterThanEqualAndBalconyTrueAndPriceLessThanEqual(int minBedrooms, BigDecimal maxPrice);`  
    → Used to show "Found 28 family-sized apartments with balcony under your budget"  
@@ -36,5 +37,3 @@ Create a search endpoint that accepts optional parameters: minPrice, maxPrice, m
 - If yes → return the top 12 results ordered by averageRating descending, then by price ascending (use `OrderByAverageRatingDescPriceAsc`).  
 - If no → fallback to a count method showing how many would match **without** the balcony or rating constraint, and suggest relaxing filters.  
   Try to keep as many methods as possible derived (no `@Query` yet).
-
-
