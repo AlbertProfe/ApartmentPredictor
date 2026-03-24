@@ -291,7 +291,7 @@ Specification
 
 <mark>Endpoint</mark>
 
-![]()
+![](https://raw.githubusercontent.com/AlbertProfe/ApartmentPredictor/refs/heads/master/docs/screenshots/code-specification-apartment.png)
 
 ```jsx
 GET /api/v1/apartment/filter  
@@ -355,7 +355,7 @@ Returns a JSON array of Apartment objects that match the filter criteria.
 ]
 ```
 
-### Example Requests
+#### Example Requests
 
 **Filter by Maximum Price**
 
@@ -381,7 +381,7 @@ GET /api/v1/apartment/filter?furnishingStatus=furnished
 GET /api/v1/apartment/filter?maxPrice=20000000&minArea=1000&minBedrooms=3&minBathrooms=2&furnishingStatus=semi&mainroad=true&airconditioning=true  
 ```
 
-### Implementation Details
+#### Implementation Details
 
 <mark>ApartmentSpecification</mark>
 
@@ -402,9 +402,9 @@ The `REST` controller:
 - Executes query using JpaSpecificationExecutor  
 - Returns filtered results with metadata headers  
 
-### Usage Examples
+#### Usage Examples
 
-#### JavaScript/Fetch
+##### JavaScript/Fetch
 
 ```javascript
 const response = await fetch('/api/v1/apartment/filter?maxPrice=10000000&minBedrooms=2');  
@@ -413,13 +413,13 @@ console.log('Total apartments:', response.headers.get('total-apartments'));
 console.log('Filtered apartments:', response.headers.get('filtered-apartments'));  
 ```
 
-#### cURL
+##### cURL
 
 ```bash
 curl -X GET "http://localhost:8080/api/v1/apartment/filter?maxPrice=15000000&airconditioning=true" \  -H "Accept: application/json"```  
 ```
 
-#### Postman
+##### Postman
 
 - Method: GET  
 - URL: `http://localhost:8080/api/v1/apartment/filter`  
@@ -634,6 +634,41 @@ When filtering by minimum number of `schools`, we must:
 3. Apply HAVING clause to filter groups by COUNT
 
 This aggregation logic operates at the **query level**, not the predicate level. The Criteria API separates simple field conditions (Predicate) from aggregate operations (groupBy/having), making the query structure clearer and more aligned with SQL semantics.
+
+### Full Apartment Specification + Reviewer
+
+```java
+// ─────────────────────────────────────────────
+// Reviewer ID filter - filter by specific reviewer
+// ─────────────────────────────────────────────
+if (isNotBlank(reviewerId)) {
+    // Join the 'review' entity to the 'apartment' entity
+    Join<Apartment, Review> reviewJoin = root.join("reviews", JoinType.INNER);
+    // Join the 'reviewer' entity to the 'review' entity
+    Join<Review, Reviewer> reviewerJoin = reviewJoin.join("reviewer", JoinType.INNER);
+                
+    p = cb.and(p, cb.equal(reviewerJoin.get("id"), reviewerId.trim()));
+}
+```
+
+This code creates a<mark> JPA Criteria API</mark> filter that:
+
+1. **Validates input**: Uses `isNotBlank`() to check for null/empty `reviewerId`
+2. **Creates joins**: Chains Apartment → Review → Reviewer relationships using `INNER` joins
+3. **Filters by ID**: Matches the reviewer's ID field exactly against the provided parameter
+4. **Handles whitespace**: Trims the input to ensure clean comparison
+
+> The filter returns **apartments** that have reviews written by the specified reviewer. 
+> 
+> The <mark>INNER</mark> join ensures only apartments with actual reviews by that reviewer are included in results, maintaining data integrity and performance.
+
+The implementation follows the existing code patterns and uses the same helper methods as other filters in the specification.
+
+**Postman**:
+
+```jsx
+http://localhost:8080/api/v1/apartment/filter?reviewerId=bd31f0be-6b5e-4a3a-9d33-d5f701ebe07f
+```
 
 ## Maven
 
