@@ -268,6 +268,7 @@ private Double longitude;
 **4. Updated Constructor / Added Getters/Setters** / Updated toString() Method
 
 - Added `latitude` and `longitude` parameters to constructor
+
 - Initialized the new fields in constructor body
 
 - Standard getter/setter methods for both fields
@@ -279,8 +280,6 @@ Validation Rules Applied:
 - **@NotNull**: Both coordinates are required fields
 - **Latitude Range**: -90 to 90 degrees (valid Earth latitude range)
 - **Longitude Range**: -180 to 180 degrees (valid Earth longitude range)
-
-
 
 ### UML
 
@@ -319,6 +318,51 @@ Spring Data’s mission is to provide a familiar and consistent, **Spring-based
 > It makes it easy to use **data access** technologies, `relational` and `non-relational` databases, `map-reduce frameworks`, and `cloud-based` data services.
 
 This is an **umbrella project which contains many subprojects** that are specific to a given database. The projects are developed by working together with many of the companies and developers that are behind these exciting technologies. 
+
+## School-Apartment Distance Calculation
+
+### Dijkstra's Algorithm?
+
+- [Implementing Dijkstra&#x27;s Algorithm in Java: A Complete Guide - CodingTechRoom](https://codingtechroom.com/tutorial/java-implementing-dijkstras-algorithm-in-java)
+
+> While Dijkstra's algorithm is excellent for finding shortest paths in weighted graphs, it's **not ideal** for calculating direct distances between schools and apartments using OpenStreetMap data.
+
+#### Why Dijkstra's Isn't Suitable Here
+
+**1. Overkill for Direct Distance:**
+
+- Dijkstra's finds shortest paths through a network of roads/intersections
+- For simple distance between two points, the Haversine formula is more efficient
+- No need to traverse the entire street network when you just need straight-line or driving distance
+
+**2. Performance Concerns:**
+
+- Dijkstra's has O(V²) complexity without priority queues
+- For thousands of apartment-school comparisons, this would be computationally expensive
+- Each calculation would require loading and processing the entire road network graph
+
+### Better Alternatives
+
+**1. Haversine Formula:**
+
+- Calculates great-circle distance between latitude/longitude points
+- Fast and simple for straight-line distances
+- Perfect for proximity filtering
+
+**2. OpenStreetMap APIs:**
+
+- Use routing APIs (like OSRM or GraphHopper) for actual driving distances
+- More accurate for real-world travel scenarios
+- Optimized for batch distance calculations
+
+**3. Geospatial Libraries:**
+
+- JTS (Java Topology Suite) for advanced geospatial operations
+- PostGIS with PostgreSQL for database-level distance queries
+
+### Best approach
+
+todo
 
 ## Maven
 
@@ -394,9 +438,9 @@ The `spring-boot-starter-validation` dependency provides Jakarta Bean Validation
             <version>1.0.0-M2.1</version>
         </dependency>
         <dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-validation</artifactId>
-		</dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
