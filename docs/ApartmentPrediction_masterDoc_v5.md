@@ -127,10 +127,10 @@ $ tree
 .
 ├── ApartmentPredictorApplication.java
 ├── controller
-│   ├── ApartmentAssignRestController.java
+│   ...
 │   ├── ApartmentFilterRestController.java
 │   ...
-│   └── SchoolRestController.java
+│   └── ...
 ├── model
 │   ...
 ├── repository
@@ -141,7 +141,7 @@ $ tree
 │  
 └── utils
     ...
-    └── PrintingUtils.java
+    └── ...
 ```
 
 ## Data Model
@@ -263,6 +263,8 @@ public class Reviewer {
 
 ## Postman documentation API REST
 
+Updated at `Queries` tab:
+
 - [apartmentPredictorCRUD](https://documenter.getpostman.com/view/7473960/2sBXVeFs8L)
 
 ## JPA
@@ -288,6 +290,8 @@ Specification
 > The Apartment Filter API provides flexible filtering capabilities for apartment listings using Spring Data JPA Specifications. This allows clients to filter apartments based on multiple criteria in a single request.  
 
 <mark>Endpoint</mark>
+
+![]()
 
 ```jsx
 GET /api/v1/apartment/filter  
@@ -349,7 +353,6 @@ Returns a JSON array of Apartment objects that match the filter criteria.
     // other fields.. 
   }
 ]
-  
 ```
 
 ### Example Requests
@@ -412,8 +415,9 @@ console.log('Filtered apartments:', response.headers.get('filtered-apartments'))
 
 #### cURL
 
-```bash  
+```bash
 curl -X GET "http://localhost:8080/api/v1/apartment/filter?maxPrice=15000000&airconditioning=true" \  -H "Accept: application/json"```  
+```
 
 #### Postman
 
@@ -421,6 +425,215 @@ curl -X GET "http://localhost:8080/api/v1/apartment/filter?maxPrice=15000000&air
 - URL: `http://localhost:8080/api/v1/apartment/filter`  
 - Query Parameters: Add as needed  
 - Headers: `Accept: application/json`
+
+### Full Apartment Specification
+
+```java
+package com.example.apartment_predictor.repository;
+
+import com.example.apartment_predictor.model.Apartment;
+import com.example.apartment_predictor.model.School;
+import com.example.apartment_predictor.model.Review;
+import org.springframework.data.jpa.domain.Specification;
+import jakarta.persistence.criteria.*;
+
+import java.util.Objects;
+
+public class ApartmentSpecification {
+
+    public static Specification<Apartment> filterBy(
+            Long maxPrice,              // ≤ this price
+            Integer minArea,            // ≥ this area (sq ft / m²)
+            Integer minBedrooms,
+            Integer minBathrooms,
+            Integer minParking,
+            String furnishingStatus,    // "furnished", "semi-furnished", "unfurnished" (partial match)
+            Boolean mainroad,           // yes/no
+            Boolean guestroom,
+            Boolean basement,
+            Boolean hotwaterheating,
+            Boolean airconditioning,
+            Boolean prefarea,           // preferred area yes/no
+            Integer minSchools,         // minimum number of schools
+            String textOnReview,        // text to search in review title or content
+            String textOnReviewTitle    // text to search in review title
+    ) {
+        return (Root<Apartment> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
+
+            Predicate p = cb.conjunction();   // starts as "true"
+
+            // ─────────────────────────────────────────────
+            // Price – most important filter
+            // ─────────────────────────────────────────────
+            if (maxPrice != null && maxPrice > 0) {
+                p = cb.and(p, cb.lessThanOrEqualTo(root.get("price"), maxPrice));
+            }
+
+            // ─────────────────────────────────────────────
+            // Area (size)
+            // ─────────────────────────────────────────────
+            if (minArea != null && minArea > 0) {
+                p = cb.and(p, cb.greaterThanOrEqualTo(root.get("area"), minArea));
+            }
+
+            // ─────────────────────────────────────────────
+            // Bedrooms & Bathrooms
+            // ─────────────────────────────────────────────
+            if (minBedrooms != null && minBedrooms > 0) {
+                p = cb.and(p, cb.greaterThanOrEqualTo(root.get("bedrooms"), minBedrooms));
+            }
+
+            if (minBathrooms != null && minBathrooms > 0) {
+                p = cb.and(p, cb.greaterThanOrEqualTo(root.get("bathrooms"), minBathrooms));
+            }
+
+            // ─────────────────────────────────────────────
+            // Parking spaces
+            // ─────────────────────────────────────────────
+            if (minParking != null && minParking > 0) {
+                p = cb.and(p, cb.greaterThanOrEqualTo(root.get("parking"), minParking));
+            }
+
+            // ─────────────────────────────────────────────
+            // Furnishing status (partial / case-insensitive)
+            // ─────────────────────────────────────────────
+            if (isNotBlank(furnishingStatus)) {
+                p = cb.and(p,
+                    cb.like(
+                        cb.lower(root.get("furnishingstatus")),
+                        "%" + furnishingStatus.trim().toLowerCase() + "%"
+                    )
+                );
+            }
+
+            // ─────────────────────────────────────────────
+            // Yes/No fields (Boolean-like strings: "yes"/"no")
+            // ─────────────────────────────────────────────
+            p = addYesNoFilter(p, cb, root, "mainroad", mainroad);
+            p = addYesNoFilter(p, cb, root, "guestroom", guestroom);
+            p = addYesNoFilter(p, cb, root, "basement", basement);
+            p = addYesNoFilter(p, cb, root, "hotwaterheating", hotwaterheating);
+            p = addYesNoFilter(p, cb, root, "airconditioning", airconditioning);
+            p = addYesNoFilter(p, cb, root, "prefarea", prefarea);
+
+            // ─────────────────────────────────────────────
+            // Schools filter - minimum number of schools
+            // ─────────────────────────────────────────────
+            if (minSchools != null && minSchools > 0) {
+                // Join the 'school' entity to the 'apartment' entity
+                Join<Apartment, School> schoolJoin = root.join("schools", JoinType.LEFT);
+                // Join<Apartment, School> schoolJoin = root.join("schools", JoinType.INNER);
+                // Group by apartment and count schools
+                query.groupBy(root.get("id"));
+                query.having(cb.ge(cb.count(schoolJoin), minSchools));
+
+            }
+
+            // ─────────────────────────────────────────────
+            // Review text filter - search in title
+            // ─────────────────────────────────────────────
+            if (isNotBlank(textOnReviewTitle)) {
+                // Join the 'review' entity to the 'apartment' entity
+                Join<Apartment, Review> reviewJoin = root.join("reviews", JoinType.INNER);
+                String searchText = "%" + textOnReviewTitle.trim().toLowerCase() + "%";
+
+                // Search only in title field
+                p = cb.and(p, cb.like(cb.lower(reviewJoin.get("title")), searchText));
+            }
+
+            // ─────────────────────────────────────────────
+            // Review text filter - search in title or content
+            // ─────────────────────────────────────────────
+            if (isNotBlank(textOnReview)) {
+                // Join the 'review' entity to the 'apartment' entity
+                Join<Apartment, Review> reviewJoin = root.join("reviews", JoinType.INNER);
+                String searchText = "%" + textOnReview.trim().toLowerCase() + "%";
+
+                // Search in both title and content fields
+                Predicate titleMatch = cb.like(cb.lower(reviewJoin.get("title")), searchText);
+                Predicate contentMatch = cb.like(cb.lower(reviewJoin.get("content")), searchText);
+                Predicate reviewTextMatch = cb.or(titleMatch, contentMatch);
+
+                p = cb.and(p, reviewTextMatch);
+            }
+
+
+            return p;
+        };
+    }
+
+    // Small helper – makes yes/no filters cleaner
+    private static Predicate addYesNoFilter(
+            Predicate current,
+            CriteriaBuilder cb,
+            Root<Apartment> root,
+            String fieldName,
+            Boolean value) {
+
+        if (value != null) {
+            String expected = value ? "yes" : "no";
+            return cb.and(current,
+                cb.equal(
+                    cb.lower(root.get(fieldName)),
+                    expected
+                )
+            );
+        }
+        return current;
+    }
+
+    // Small utility – checks string is not null/empty/whitespace
+    private static boolean isNotBlank(String s) {
+        return s != null && !s.trim().isEmpty();
+    }
+}
+```
+
+> The [ApartmentSpecification](cci:2://file:///home/albert/MyProjects/Sandbox/ApartmentPredictorProject/ApartmentPredictor/src/main/java/com/example/apartment_predictor/repository/ApartmentSpecification.java:10:0-157:1) class **Spring Data JPA Specification** provides dynamic, criteria-based filtering for full Apartment entities.
+
+**Filter Categories**:
+
+- **Price/Area**: Maximum price, minimum area
+- **Rooms**: Minimum bedrooms, bathrooms, parking spaces  
+- **Amenities**: Boolean filters for mainroad, guestroom, basement, hotwaterheating, airconditioning, prefarea
+- **Text Search**: Furnishing status (partial match), review title/content search
+- **Related Entities**: <mark>Minimum number of schools, review text filtering</mark>
+
+**Technical Implementation**:
+
+- Uses `JPA Criteria API` for type-safe query building
+- Implements `LEFT/INNER JOINs` for `School` and `Review` <mark>relationships</mark>
+- Supports `GROUP BY` and `HAVING` clauses for `school` count filtering
+- Case-insensitive text searches with `LIKE` operations
+- Helper methods for `Boolean` string handling ("yes"/"no") and null checking
+
+### Why Query Instead of Predicate for School Count
+
+```java
+if (minSchools != null && minSchools > 0) {
+     // Join the 'school' entity to the 'apartment' entity
+     Join<Apartment, School> schoolJoin = root.join("schools", JoinType.LEFT);
+     // Join<Apartment, School> schoolJoin = root.join("schools", JoinType.INNER);
+     // Group by apartment and count schools
+     query.groupBy(root.get("id"));
+     query.having(cb.ge(cb.count(schoolJoin), minSchools));
+}
+```
+
+> The school count filtering uses <mark>direct query operations</mark> instead of `Predicate` because it requires **aggregation** (`counting related entities`), not simple field comparisons.
+
+**Key Difference**:
+
+- `Predicate` works for field-level conditions (price ≤ X, area ≥ Y)
+- `groupBy()` and `having()` are needed for **aggregate functions** like COUNT()
+
+When filtering by minimum number of `schools`, we must:
+
+1. Join apartments with schools
+2. Group results by apartment ID
+3. Apply HAVING clause to filter groups by COUNT
+
+This aggregation logic operates at the **query level**, not the predicate level. The Criteria API separates simple field conditions (Predicate) from aggregate operations (groupBy/having), making the query structure clearer and more aligned with SQL semantics.
 
 ## Maven
 
